@@ -1,0 +1,3 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
+export function readTrial(value:string|undefined){if(!value)return 0; const [count,signature]=value.split('.'); if(!count||!signature||!process.env.TRIAL_SIGNING_SECRET)return 2;const expected=createHmac('sha256',process.env.TRIAL_SIGNING_SECRET).update(count).digest('hex');return signature.length===expected.length&&timingSafeEqual(Buffer.from(signature),Buffer.from(expected))?Math.min(2,Math.max(0,Number(count)||0)):2;}
+export function signTrial(count:number){return `${count}.${createHmac('sha256',process.env.TRIAL_SIGNING_SECRET!).update(String(count)).digest('hex')}`;}

@@ -1,0 +1,3 @@
+import { NextResponse } from 'next/server';
+import { licenseInput, validateLicense } from '@/lib/license';
+export async function POST(request:Request){try{const parsed=licenseInput.safeParse((await request.json()).licenseKey);if(!parsed.success)return NextResponse.json({error:'Enter a valid license key.'},{status:400}); const valid=await validateLicense(parsed.data);return NextResponse.json(valid?{valid:true}:{valid:false,error:'This license is invalid, expired, or belongs to a different product.'},{status:valid?200:403});}catch(error){return NextResponse.json({error:error instanceof Error?error.message:'Unable to verify license.'},{status:503});}}
